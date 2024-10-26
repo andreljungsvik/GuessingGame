@@ -1,0 +1,114 @@
+Jag siktar på VG!
+
+pull hämtar och uppdaterar din lokala kopia av det remote repositoryt. Kommandot kombinerar fetch (hämtar de senaste ändringarna) 
+och merge (slår ihop ändringarna med din aktuella gren).
+
+push skickar dina ändringar lokala ändringar till remote repository.
+Så pull och push används för att synkronisera den lokala kopian och remote repositoryt.
+
+git log visar commit historiken för repositorit. visar commit hash, personen som gjort den, datum och tid, och commitmeddelande.
+används när man behöver lista commit historiken för att exempel återställa till en tidigare commit.
+
+git status används för se vilka filer som ändrats, filer som är redo att commitats (i staging) eller är untracked(nya filer som ännu inte lagts till). 
+man får en överblick på vad som förändrats i arbetskatalogen och vad man behöver göra för sin commit.
+
+En branch är ett sätt att kunna arbeta på en del av ditt projekt isolerat från andra. På så sätt kan flera arbeta samtidigt på olika delar 
+av projektet utan att påverka varandra. När man är klar med sin ändring mergar man sin branch med huvud branchen. Detta är en mycket viktig funktion som 
+leder till en effektiv och strukturerad arbetsmiljö.
+
+git checkout 
+Användning: används för att flytta sig mellan olika commits, grenar eller gå tillbaka till en tidigare version.
+Scenario:  Om man vill se hur koden såg ut i tidigare commit.
+Exempel: Jag vill gå tillbaka och se hur min fil Guesser.java såg ut innan jag la till reply metoden. Jag skriver "git log --oneline" och ser att commiten f2201de 
+var den innan jag la till reply metoden. Jag skriver "git checkout f2201de". Nu när jag skriver "cat Guesser.java" ser jag att reply metoden inte är färdig än.
+
+git reset 
+--soft behåller alla ändringar i staging och arbetskatalogen.
+--mixed är default flaggan och den rensar staging men inte arbetskatalogen.
+--hard återställer permanent och tar bort allt i staging och arbetskatalogen.
+Användning: återställer grenen till en tidigare commit. De finns olika flaggor som väljer vad som sparas eller inte.
+Scenario:  När man vill återställa tillbaka till en äldre commit men beroende på flagga spara eller inte aktuella ändringar.
+Exempel: Jag commitat min reply metod i Guesser.java men jag märker att jag introducerat några buggar. Jag har några ändringar i min staging för Guesser.java som jag 
+inte vill ska försvinna. Så jag skriver "git reset --soft 8e8072d" och nu är jag tillbaka innan jag commitade min reply metod fast jag har kvar de andra ändringarna
+jag hade i staging. Hade jag velat att min staging skulle försvinna kunde jag kört utan flagga och hade jag velat att staging och arbetskatalog skulle försvinna
+hade jag kört med --hard.
+
+git revert 
+Användning: är en säkrare metod som skapar en ny commit och ångrar ändringar.
+Scenario: En commit med ändringar men som orsakat något fel. och folk har redan baserat sitt arbete på commiten. 
+Exempel: Janne har pushat sin commit som introducerat flertal buggar. alla har redan baserat sitt arbete på commiten. Jag gör en "git revert abc1234" fixar buggarna 
+och pushar den nya commiten jag skapat. Folk är inte arga på Janne länge, jag blir hyllad och det servas tårta.
+
+git restore 
+Användning: används för att återställa filer till en tidigare version.
+Scenario: Man har gjort ändringar på en fil men de ska skrotas pga chefen ändrat sig.
+Exempel: Jag har gjort massa ändringar men specifikationen på programmet har ändrats och jag får skrota det. Jag använder "git restore Guesser.java" och då får jag 
+tillbaka den senast commitade versionen av filen.
+
+
+VG Frågan:
+Magnus och Lars arbetarr på varsinn branch med login och signup funktioner. Grenarna heter feature-login och feature-signup,och de båda utgår från main. 
+Efter att de båda hra gjort några commits ska de integrera sina ändringar i main.
+
+Steg 1: Magnus mergar sin gren. Magnus arbetar i login.java filen på sin branch feature-login.
+När han är klar, mergar han sin branch in i main.
+Ingen konflikt uppstog, och Magnus commitar sina ändringar till main.
+
+Steg 2: Lars försöker merga sin gren
+Lars gör sina ändringar i login.java på sin branch feature-signup.
+När Lars försöker merga sin branch till main, uppstår en konflikt i login.java, eftersom både Magnus och Lars har gjort ändringar i samma del av filen.
+
+Steg 3: Lösa konflikten
+Lars öppnar login.java och ser konfliktmarkeringarna. Han löser konflikten genom att redigera filen. När konflikten är löst, lägger han till filen och gör en commit:
+"Konflikt löst mellan grenarna feature-login och feature-signup".
+
+Alternativt Scenario med rebase
+Steg 1: Magnus rebasar sin gren.
+Magnus gör sina ändringar i login.java på sin branch feature-login.
+han rebasar sin gren på main, och ingen konflikkt uppostog.
+Magnus mergar sin gren till main utan problem.
+
+Steg 2: Lars rebasar sin gren
+Lars gör sina ändringar i login.java på sin branch feature-signup.
+När han försöker rebasa sin gren på main, uppstår en konflikt i login.java.
+
+Steg 3: Lösa konflikten under rebase
+Lars öppnar login.java och ser konflikt markeringarna.
+Han redigerar filen och löser konflikten.
+när konflikten är löst, lägger han till filen och fortsätter rebase, git add login.java och rebase --continue.
+Lars mergar sen sin gren till main.
+
+Sammanfattning:
+I det första scenariot använde lars merge för att integrera sina ändringar, vilket resulterade i en konflikt som han var tvungen att lösa. I det andra scenariot 
+använde Magnus och Lars rebase, där Lars också stötte på en konflikt, men han löste den under rebasingprocessen innan han mergeade sin gren.
+
+Merge bevarar historiken och kontext för commits, det kan bli stökig historik ifall det blir för många.
+
+Rebase blir renare men man kan tappa kontexten eftersom det blir förre commits. Man får använda det varsamt men det blir väldigt snyggt om man gör det bra.
+
+
+commit historik:
+
+commit 5d3a25b (HEAD -> main)
+Author: Lars <lars@larsson.se>
+Date:   Fri Oct 26 14:00:00 2024 +0200
+
+    Konflikt löst mellan grenarna feature-login och feature-signup.
+
+commit 4a2e15c
+Author: Magnus <magnus@magnusson.se>
+Date:   Fri Oct 26 13:30:00 2024 +0200
+
+    La till login-funktionalitet.
+
+commit 3a1b09d (feature-signup)
+Author: Lars <lars@larsson.se>
+Date:   Fri Oct 26 13:00:00 2024 +0200
+
+    La till signup-funktionalitet.
+
+commit 1f5d84a (feature-login)
+Author: Magnus <magnus@magnusson.se>
+Date:   Fri Oct 26 12:30:00 2024 +0200
+
+    Första commit av login-funktionen.
