@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME=$USER
+NAME="Andre_Ljungsvik"
 DIRECTORY="${NAME}_labb"
 
 echo $NAME"s program"
